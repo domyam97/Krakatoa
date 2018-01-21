@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Video Stream</title>
+  </head>
+  <body>
+	<script>
+		function changecolor(){
+			document.getElementById('arbitrary_button').style.color="red";
+	}
+	</script>
+    <h1>Video</h1>
+    <img src="{{ url_for('video_feed') }}">
+	<form action='/arbitrary_name' method='POST'>
+			<button type="submit" id='arbitrary_button' onclick="changecolor()">button</button>  
+	</form>
+</body>
+</html>
