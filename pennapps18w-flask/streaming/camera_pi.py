@@ -23,7 +23,7 @@ class Camera(BaseCamera):
 
             if(kill[0]):
                 camera.close()
-                print("DAEDA")
+                kill[0] = 0
                 break
                 
 

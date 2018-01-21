@@ -6,8 +6,8 @@ import traceback
 s3 = boto3.resource('s3')
 s3_client = boto3.client('s3')
 rek = boto3.client('rekognition', region_name='us-east-1')
-topic_ARN = 'arn:aws:sns:us-east-1:409130869008:krakatoa_dev'
-role_ARN = 'arn:aws:iam::409130869008:role/Krakatoa'
+topic_ARN = 'SNS topic ARN'
+role_ARN = 'role ARN'
 sqs = boto3.client('sqs')
 sqs_res = ''
 celebs = ''
@@ -51,11 +51,11 @@ def celeb_img(filename):
 
     return img_resp
 
-    
+#deprecated    
 def call_sqs():
     global sqs_res
     sqs_res = sqs.receive_message(
-        QueueUrl='https://sqs.us-east-1.amazonaws.com/409130869008/krakatoa_vid',
+        QueueUrl='queue url',
         MaxNumberOfMessages=1,
         WaitTimeSeconds = 20,
         )

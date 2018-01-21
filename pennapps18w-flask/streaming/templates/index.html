@@ -10,9 +10,15 @@
 	}
 	</script>
     <h1>Video</h1>
-    <img src="{{ url_for('video_feed') }}">
+    
+	{% if result %}
+		<p class='result'>Result: {{ result }} </p>
+	{% endif %}
+
+
+	<img src="{{ url_for('video_feed') }}" style='display:block; margin: 0 auto; width:75%'>
 	<form action='/arbitrary_name' method='POST'>
-			<button type="submit" id='arbitrary_button' onclick="changecolor()">button</button>  
+			<button type="submit" id='arbitrary_button' onclick="changecolor()">Record and Recognize</button>  
 	</form>
 </body>
 </html>
