@@ -13,7 +13,7 @@ logger = logging.getLogger('mainlog')
 reload(sys)
 sys.setdefaultencoding("UTF-8")
 
-set_key('Movie API Key')
+set_key('TMDb API Key')
 
 def deleteFile(filename, bucket):
         s3_client.delete_object(Bucket=bucket, Key=filename)
