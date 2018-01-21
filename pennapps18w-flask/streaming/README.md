@@ -4,7 +4,14 @@
 - Tmdb3 *sudo pip install tmdb3*
 
 # AWS Setup
+### S3
+S3 is used to temporarily store video files captured by the Raspberry Pi. Create a new bucket to use with this application. Ensure that the user has the proper IAM policies and roles to read/write files in S3. A separate, public S3 bucket is also used to host files for website front end.
 
+### Rekognition
+Ensure that the user has IAM policies and roles to call Rekognition methods.
+
+### SQS 
+Used only as a dummy target for the start_celebrity_recognition() method. Needs IAM role to allow it to call Rekognition methods.
 
 # Running the program
 Run *app.py* from within the *streaming* directory.  Ensure that a *tmp* directory exists under the *streaming* directory for it to run properly.  Logs will be stored in the *Log* directory in case any issue arises.  Running *app.py* will start the Ngrok service, and print to the terminal the address which the web front-end can be reached.  This is also uploaded to the AWS bucket for remote access.
