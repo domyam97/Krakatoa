@@ -6,30 +6,28 @@ import logging
 from tmdb3 import *
 from aws import *
 import time
+import os
 
 logger = logging.getLogger('mainlog')
 
 reload(sys)
 sys.setdefaultencoding("UTF-8")
 
-set_key('c342d945097976e4134042f845005989')
+set_key('Movie API Key')
 
-def uploadFile(filename):
-        s3_client.upload_file('./tmp/'+filename, 'pennapps-retro', filename)
+def deleteFile(filename, bucket):
+        s3_client.delete_object(Bucket=bucket, Key=filename)
+        os.remove('./tmp/'+filename)
+
+def uploadFile(filename, bucket):
+        s3_client.upload_file(filename, bucket, filename)
+
+def uploadVideo(filename, bucket):
+        s3_client.upload_file('./tmp/'+filename, bucket, filename)
 
 def detectFaces(filename_raw):
     logger.debug("Filename: " + str(filename_raw))
     filename = filename_raw.lower()
-
-    ################################
-    #FIX THIS
-    ################################
-    '''
-    files = bucket.get_available_subresources()
-    if(filename not in files):
-        logger.error("Filename not found on server")
-        sys.exit()
-    '''
 
     # Detect the format of the input file
     video_ext = ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.h264']
@@ -49,7 +47,7 @@ def detectFaces(filename_raw):
 
     if(fileType == ''):
         logger.critical("File extension not recognized")
-        return 2
+        return "Error: File extension not found"
 
     if(fileType == 'image'):
         # Download image
@@ -129,7 +127,7 @@ def detectFaces(filename_raw):
     # If one or zero faces are detected, no results can be drawn
     if(len(faces) <= 1):
         logger.warning("Not enough actors found, no recommendation can be made.  Found: " + str(len(faces)))
-        return 2
+        return "Error: Not enough actors in frame"
 
     # Get roles for each identified face in list of lists
     titles = []
@@ -153,14 +151,15 @@ def detectFaces(filename_raw):
     # attempt to find common movies with n-1 actors
     if(len(result) == 0 and len(faces) <= 2):
         logger.warning("Could not find common movie, not enough actors remaining")
-        return 2
+        return "Error: Could not find enough actors to determine movie"
 
+	
     elif(len(result) == 0 and len(faces) > 2):
         logger.debug("Couldn't find common movie, trying n-1 actors")
         shortActorList = [] # Create the empty list to hold n-1 actors
         for i in range(0, len(titles)):
             shortActorList.append(titles[0:i]+titles[i+1:])
-
+        final = []
         # Look for a movie in any of the n-1 actor lists
         for shortList in shortActorList:
             result = set(shortList[0]).intersection(set(shortList[1]))
@@ -171,14 +170,17 @@ def detectFaces(filename_raw):
                 logger.warning("No movies found")
             else:
                 for title in result:
+                    animationFlag = 0
                     genres = searchMovie(title)[0].genres
                     for genre in genres:
                         if('Animation' in genre.name):
                             animationFlag = 1
                     if(not animationFlag):
                         logger.info("This movie could be " + str(title))
+                        final.append(str(title))
         
     else:
+        final = []
         for title in result:
             animationFlag = 0
             genres = searchMovie(title)[0].genres
@@ -187,5 +189,6 @@ def detectFaces(filename_raw):
                     animationFlag = 1
             if(not animationFlag):
                 logger.info("This movie could be " + str(title))
+                final.append(str(title))
 	
-	return 0
+    return final
